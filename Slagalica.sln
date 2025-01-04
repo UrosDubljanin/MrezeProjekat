@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35521.163 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slagalica", "Slagalica\Slagalica.csproj", "{18F51E97-A326-429B-90AC-4A9CFD6BEF40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{9872BD6D-F64E-4021-829E-3D5A6AB1F834}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{18F51E97-A326-429B-90AC-4A9CFD6BEF40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18F51E97-A326-429B-90AC-4A9CFD6BEF40}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18F51E97-A326-429B-90AC-4A9CFD6BEF40}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18F51E97-A326-429B-90AC-4A9CFD6BEF40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9872BD6D-F64E-4021-829E-3D5A6AB1F834}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9872BD6D-F64E-4021-829E-3D5A6AB1F834}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9872BD6D-F64E-4021-829E-3D5A6AB1F834}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9872BD6D-F64E-4021-829E-3D5A6AB1F834}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
