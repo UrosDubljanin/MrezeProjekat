@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Server\\Server.csproj": {}
+    "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Klijent\\Klijent.csproj": {}
   },
   "projects": {
     "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Klase\\Klase.csproj": {
@@ -69,14 +69,14 @@
         }
       }
     },
-    "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Server\\Server.csproj": {
+    "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Klijent\\Klijent.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Server\\Server.csproj",
-        "projectName": "Server",
-        "projectPath": "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Server\\Server.csproj",
+        "projectUniqueName": "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Klijent\\Klijent.csproj",
+        "projectName": "Klijent",
+        "projectPath": "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Klijent\\Klijent.csproj",
         "packagesPath": "C:\\Users\\ozren\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Server\\obj\\",
+        "outputPath": "C:\\Users\\ozren\\source\\repos\\MrezeProjekat\\Klijent\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
