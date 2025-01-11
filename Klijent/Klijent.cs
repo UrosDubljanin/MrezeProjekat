@@ -18,8 +18,6 @@ namespace Klijent
 
             int brojBajta = clientSocket.SendTo(binarnaPrijava, 0, binarnaPrijava.Length, SocketFlags.None, serverEP);
 
-            clientSocket.Connect(serverEP);
-
             byte[] buffer = new byte[1024];
             string odgovor;
 
@@ -30,6 +28,8 @@ namespace Klijent
             Console.WriteLine();
             string spreman = Console.ReadLine();
             clientSocket.Send(Encoding.UTF8.GetBytes(spreman));
+
+            clientSocket.Close();
         }
     }
 }
