@@ -9,7 +9,7 @@ namespace Klijent
         static void Main(string[] args)
         {
             Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint serverEP=new IPEndPoint(IPAddress.Any, 50001);
+            IPEndPoint serverEP=new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50001);
             EndPoint posiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
             Console.WriteLine("Izvrsite prijavu: ");

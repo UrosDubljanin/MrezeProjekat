@@ -13,11 +13,11 @@ namespace Klase
         public string KorisnickoIme { get; set; } = "";
         public int[] bodovi { get; set; }= new int[3];
 
-        public Igrac(int iD, string korisnickoIme)
+        public Igrac(int iD, string korisnickoIme,int brojIgri)
         {
             ID = iD;
             KorisnickoIme = korisnickoIme;
-            bodovi = [0, 0, 0];
+            bodovi = new int[brojIgri];
         }
     }
 }
