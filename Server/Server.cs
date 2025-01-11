@@ -16,6 +16,21 @@ namespace Server
 
             EndPoint posiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
+
+            while (true) {
+                
+            
+            
+            
+            
+            
+            
+            }
+
+
+
+
+
             serverSocket.Close();
         }
     }
