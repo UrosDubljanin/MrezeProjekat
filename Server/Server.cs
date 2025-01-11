@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using Klase;
@@ -17,7 +18,6 @@ namespace Server
             Console.WriteLine("Server ceka igrace da bi poceo igru:");
 
             EndPoint posiljaocEP = new IPEndPoint(IPAddress.Any, 0);
-
 
             while (true) {
                 byte[] prijavaBufer= new byte[1024];
@@ -51,8 +51,37 @@ namespace Server
 
                     Console.WriteLine($"Igrac {igrac.KorisnickoIme} se uspesno prijavio i hoce da igra {brojIgri} igri.");
 
+                    ///////////////////////////////////////////////////////////////////////////
 
-                }catch(Exception e)
+                    Socket acceptedSocket = serverSocket.Accept();
+                    // Dobijanje udaljene (remote) IP adrese i porta
+                    IPEndPoint remoteEndPoint = acceptedSocket.RemoteEndPoint as IPEndPoint;
+                    if (remoteEndPoint != null)
+                    {
+                        Console.WriteLine("Peer's IP address is: {0}", remoteEndPoint.Address.ToString());
+                        Console.WriteLine("Peer's port is: {0}", remoteEndPoint.Port);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Could not retrieve remote end point information.");
+                    }
+                    
+                    //Primer za dobijanje lokalne adrese:
+                    // Dobijanje lokalne (local) IP adrese i porta
+                    IPEndPoint localEndPoint = acceptedSocket.LocalEndPoint as IPEndPoint;
+                    if (localEndPoint != null)
+                    {
+                        Console.WriteLine("Local IP address is: {0}", localEndPoint.Address.ToString());
+                        Console.WriteLine("Local port is: {0}", localEndPoint.Port);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Could not retrieve local end point information.");
+                    }
+                   
+                    /////////////////////////////////////////////////////////////////////////////////////
+                }
+                catch (Exception e)
                 {
                     break;
                 }

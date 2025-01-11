@@ -12,7 +12,7 @@ namespace Klijent
             IPEndPoint serverEP=new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50001);
             EndPoint posiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
-            Console.WriteLine("Izvrsite prijavu: ");
+            Console.WriteLine("Izvršite prijavu u formatu: PRIJAVA: [ime/nadimak], [igre odvojene zarezima (sl, sk, kzz)]");
             string prijava="PRIJAVA: "+Console.ReadLine();
             byte[] binarnaPrijava=Encoding.UTF8.GetBytes(prijava);
 
