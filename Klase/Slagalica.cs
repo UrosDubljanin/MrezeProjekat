@@ -21,7 +21,7 @@ namespace Klase
         public void GenerisiSlova()
         {
             PonudjenaSlova = "";
-            string slova = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; 
+            string slova = "ABVGDEŽZIJKLLJMNNJOPRSTĆUFHCČDŽŠ"; 
             char[] generisanaSlova = new char[12];
             int brojRazlicitihSlova = 0;
 
@@ -56,5 +56,23 @@ namespace Klase
             PonudjenaSlova = new string(generisanaSlova);
         }
 
+        public int ProveriRec(string sastavljenaRec)
+        {
+            sastavljenaRec = sastavljenaRec.ToLower();
+            string ponudjenaSlovaKopija = PonudjenaSlova.ToLower();
+
+            foreach (char slovo in sastavljenaRec)
+            {
+                if (!ponudjenaSlovaKopija.Contains(slovo))
+                {
+                    return 0;
+                }
+
+                int index = ponudjenaSlovaKopija.IndexOf(slovo);
+                ponudjenaSlovaKopija = ponudjenaSlovaKopija.Remove(index, 1);
+            }
+
+            return sastavljenaRec.Length * 5;
+        }
     }
 }
