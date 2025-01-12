@@ -35,10 +35,11 @@ namespace Klijent
             Console.WriteLine(odgovor);
 
             Console.WriteLine();
-            string spreman = Console.ReadLine();
-            udpSocket.Send(Encoding.UTF8.GetBytes(spreman));
+            string? spreman = Console.ReadLine();
+            tcpSocket.Send(Encoding.UTF8.GetBytes(spreman));
 
             udpSocket.Close();
+            tcpSocket.Close();
         }
     }
 }

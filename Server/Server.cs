@@ -64,11 +64,17 @@ namespace Server
                     Console.WriteLine($"Igrac {igrac.KorisnickoIme} se uspesno prijavio i hoce da igra {brojIgri} igri.");
 
                     Socket povezanSocket = tcpSocket.Accept();
-                    poruka = "Uspesno ste ostvarili vezu sa serverom, igra moze da pocne";
+                    poruka = "Uspesno ste ostvarili vezu sa serverom, igra moze da pocne. Kad budete spremni posaljite poruku [SPREMAN]";
                     byte[] bajt = Encoding.UTF8.GetBytes(poruka);
                     povezanSocket.Send(bajt);
 
-
+                    brBajta=povezanSocket.Receive(bajt);
+                    poruka= Encoding.UTF8.GetString(bajt, 0, brBajta);
+                    poruka.ToLower();
+                    if (poruka == "spreman")
+                    {
+                        Console.WriteLine("Igrac je spreman za pocetak igre.");
+                    }
 
 
 
