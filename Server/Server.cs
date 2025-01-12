@@ -10,20 +10,32 @@ namespace Server
     {
         static void Main(string[] args)
         {
+            //Vezano za igru
             int brojacIgraca = 0;
             List<Igrac> igraci = new List<Igrac>();
-            Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint serverEP = new IPEndPoint(IPAddress.Any, 50001);
-            serverSocket.Bind(serverEP);
-            Console.WriteLine("Server ceka igrace da bi poceo igru:");
 
+
+            //UDP
+            Socket udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            IPEndPoint serverEP = new IPEndPoint(IPAddress.Any, 50001);
+            udpSocket.Bind(serverEP);
+            Console.WriteLine("Server ceka igrace da bi poceo igru:");
             EndPoint posiljaocEP = new IPEndPoint(IPAddress.Any, 0);
+
+            //TCP
+            Socket tcpSocket=new Socket(AddressFamily.InterNetwork,SocketType.Stream, ProtocolType.Tcp);
+            IPEndPoint localEP = new IPEndPoint(IPAddress.Any, 50002);
+            tcpSocket.Bind(localEP);
+            tcpSocket.Listen();
+
+
+
 
             while (true) {
                 byte[] prijavaBufer= new byte[1024];
                 try
                 {
-                    int brBajta = serverSocket.ReceiveFrom(prijavaBufer, ref posiljaocEP);
+                    int brBajta = udpSocket.ReceiveFrom(prijavaBufer, ref posiljaocEP);
                     string poruka = Encoding.UTF8.GetString(prijavaBufer, 0, brBajta);
                     string[] delovi = poruka.Split(":");
                     string[] delici = delovi[1].Split(",");
@@ -51,35 +63,18 @@ namespace Server
 
                     Console.WriteLine($"Igrac {igrac.KorisnickoIme} se uspesno prijavio i hoce da igra {brojIgri} igri.");
 
-                    ///////////////////////////////////////////////////////////////////////////
+                    Socket povezanSocket = tcpSocket.Accept();
+                    poruka = "Uspesno ste ostvarili vezu sa serverom, igra moze da pocne";
+                    byte[] bajt = Encoding.UTF8.GetBytes(poruka);
+                    povezanSocket.Send(bajt);
 
-                    Socket acceptedSocket = serverSocket.Accept();
-                    // Dobijanje udaljene (remote) IP adrese i porta
-                    IPEndPoint remoteEndPoint = acceptedSocket.RemoteEndPoint as IPEndPoint;
-                    if (remoteEndPoint != null)
-                    {
-                        Console.WriteLine("Peer's IP address is: {0}", remoteEndPoint.Address.ToString());
-                        Console.WriteLine("Peer's port is: {0}", remoteEndPoint.Port);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Could not retrieve remote end point information.");
-                    }
-                    
-                    //Primer za dobijanje lokalne adrese:
-                    // Dobijanje lokalne (local) IP adrese i porta
-                    IPEndPoint localEndPoint = acceptedSocket.LocalEndPoint as IPEndPoint;
-                    if (localEndPoint != null)
-                    {
-                        Console.WriteLine("Local IP address is: {0}", localEndPoint.Address.ToString());
-                        Console.WriteLine("Local port is: {0}", localEndPoint.Port);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Could not retrieve local end point information.");
-                    }
-                   
-                    /////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+                    povezanSocket.Close();
                 }
                 catch (Exception e)
                 {
@@ -90,8 +85,9 @@ namespace Server
 
 
 
-
-            serverSocket.Close();
+           
+            udpSocket.Close();
+            tcpSocket.Close();
  
         }
     }
