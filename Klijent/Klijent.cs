@@ -22,7 +22,8 @@ namespace Klijent
 
 
             Console.WriteLine("Izvršite prijavu u formatu: PRIJAVA: [ime/nadimak], [igre odvojene zarezima (sl, sk, kzz)]");
-            string prijava="PRIJAVA: "+Console.ReadLine();
+            Console.Write("PRIJAVA: ");
+            string prijava="PRIJAVA:"+ Console.ReadLine();
             byte[] binarnaPrijava=Encoding.UTF8.GetBytes(prijava);
 
             int brojBajta = udpSocket.SendTo(binarnaPrijava, 0, binarnaPrijava.Length, SocketFlags.None, serverEPudp);
