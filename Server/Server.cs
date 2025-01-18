@@ -74,39 +74,133 @@ namespace Server
                     }
 
 
-                    Slagalica slagalica = new Slagalica();
-                    slagalica.GenerisiSlova();
-
-                    Console.WriteLine($"Ponudjena slova za igru su: {slagalica.PonudjenaSlova}");
-
-                    string pocetnaSlova = $"{slagalica.PonudjenaSlova}";
-                    byte[] bajtovi = Encoding.UTF8.GetBytes(pocetnaSlova);
-                    povezanSocket.Send(bajtovi);
-
-                    byte[] buffer = new byte[1024];
-                    int primljenoBajtova = povezanSocket.Receive(buffer);
-                    string recIgraca = Encoding.UTF8.GetString(buffer, 0, primljenoBajtova);
-
-                    int poeni = slagalica.ProveriRec(recIgraca);
-                    string rezultat;
-
-                    if (poeni > 0)
+                    for (int i = 1; i < delici.Length; i++)
                     {
-                        rezultat = $"Rijec koju ste unijeli je validna! Osvojili ste {poeni} poena.";
+                        if (delici[i] == "sl")
+                        {
+                            Slagalica slagalica = new Slagalica();
+                            slagalica.GenerisiSlova();
+
+                            Console.WriteLine($"Ponudjena slova za igru su: {slagalica.PonudjenaSlova}");
+
+                            string pocetnaSlova = $"{slagalica.PonudjenaSlova}";
+                            byte[] bajtovi = Encoding.UTF8.GetBytes(pocetnaSlova);
+                            povezanSocket.Send(bajtovi);
+
+                            byte[] buffer = new byte[1024];
+                            int primljenoBajtova = povezanSocket.Receive(buffer);
+                            string recIgraca = Encoding.UTF8.GetString(buffer, 0, primljenoBajtova);
+
+                            int poeni = slagalica.ProveriRec(recIgraca);
+                            string rezultat;
+
+                            if (poeni > 0)
+                            {
+                                rezultat = $"Rijec koju ste unijeli je validna! Osvojili ste {poeni} poena.";
+                            }
+                            else
+                            {
+                                rezultat = "Rijec koju ste unijeli nije validna!";
+                            }
+
+                            byte[] rezultatBajtovi = Encoding.UTF8.GetBytes(rezultat);
+                            povezanSocket.Send(rezultatBajtovi);
+
+                        }else if (delici[i] == "sk")
+                        {
+                            Skocko skocko = new Skocko();
+                            skocko.GenerisiKombinaciju();
+
+                            Console.WriteLine($"Trazena kombinacija je {skocko.TrazenaKomb}");
+
+                            string pocetnaSlova = $"Unesite kombinaciju sledecih znakova HTPKSZ";
+                            byte[] bajtovi = Encoding.UTF8.GetBytes(pocetnaSlova);
+                            povezanSocket.Send(bajtovi);
+
+                            int brojac = 1;
+                            int brojOsvojenihPoena = 0;
+                            while (brojac<6)
+                            {
+                                byte[] buffer = new byte[1024];
+                                int primljenoBajtova = povezanSocket.Receive(buffer);
+                                string kombinacijaIgraca = Encoding.UTF8.GetString(buffer, 0, primljenoBajtova);
+
+                                string rezultat = skocko.ProveriKombinaciju(kombinacijaIgraca);
+
+                                if (rezultat == "4 znaka su na pravom mestu, 0 nisu na mestu.") {
+                                    if (brojac == 1)
+                                    {
+                                        brojOsvojenihPoena = 30;
+                                    }else if (brojac == 2)
+                                    {
+                                        brojOsvojenihPoena = 25;
+                                    }else if(brojac == 3)
+                                    {
+                                        brojOsvojenihPoena = 20;
+                                    }else if (brojac == 4)
+                                    {
+                                        brojOsvojenihPoena = 15;
+                                    }
+                                    else
+                                    {
+                                        brojOsvojenihPoena = 10;
+                                    }
+                                    byte[] nizz = Encoding.UTF8.GetBytes(rezultat+$"Osvojili ste {brojOsvojenihPoena} poena!");
+                                    povezanSocket.Send(nizz);
+                                    break;
+                                }
+
+                                byte[] niz = Encoding.UTF8.GetBytes(rezultat);
+                                povezanSocket.Send(niz);
+
+                                brojac++;
+                            }
+                        }
+                        else
+                        {
+                            KoZnaZna koznazna = new KoZnaZna();
+                            koznazna.UcitavanjePitanja();
+
+
+                            foreach (var pitanje in koznazna.SvaPitanja)
+                            {
+                                if (koznazna.OpcijePitanja.TryGetValue(pitanje.Key, out var opcije))
+                                {
+                                    string pitanjeZaKlijenta = $"{pitanje.Key}\n1 - {opcije.Item1}\n2 - {opcije.Item2}\n3 - {opcije.Item3}";
+                                    byte[] pitanjeBajtovi = Encoding.UTF8.GetBytes(pitanjeZaKlijenta);
+                                    povezanSocket.Send(pitanjeBajtovi);
+
+                                    byte[] buffer = new byte[1024];
+                                    int primljenoBajtova = povezanSocket.Receive(buffer);
+                                    string odgovorKlijentaStr = Encoding.UTF8.GetString(buffer, 0, primljenoBajtova);
+
+                                    if (int.TryParse(odgovorKlijentaStr, out int odgovorKlijenta))
+                                    {
+                                        string rezultat = koznazna.Provjera(pitanje.Key, odgovorKlijenta); 
+                                        byte[] rezultatBajtovi = Encoding.UTF8.GetBytes(rezultat);
+                                        povezanSocket.Send(rezultatBajtovi); 
+
+                                    }
+                                    else
+                                    {
+                                        string greska = "Netacan unos. Očekuje se broj 1, 2 ili 3.";
+                                        byte[] greskaBajtovi = Encoding.UTF8.GetBytes(greska);
+                                        povezanSocket.Send(greskaBajtovi); 
+                                    }
+                                }
+                                else
+                                {
+                                    string greska = "Pitanje nema definisane opcije.";
+                                    byte[] greskaBajtovi = Encoding.UTF8.GetBytes(greska);
+                                    povezanSocket.Send(greskaBajtovi);
+                                }
+                            }
+                            string krajPoruka = "Odgovoreno je na sva pitanja. Kraj igre!";
+                            byte[] krajBajtovi = Encoding.UTF8.GetBytes(krajPoruka);
+                            povezanSocket.Send(krajBajtovi);
+
+                        }
                     }
-                    else
-                    {
-                        rezultat = "Rijec koju ste unijeli nije validna!";
-                    }
-
-                    byte[] rezultatBajtovi = Encoding.UTF8.GetBytes(rezultat);
-                    povezanSocket.Send(rezultatBajtovi);
-
-
-
-
-
-
 
 
                     povezanSocket.Close();
