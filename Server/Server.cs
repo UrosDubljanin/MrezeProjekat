@@ -19,7 +19,7 @@ namespace Server
             Socket udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             IPEndPoint serverEP = new IPEndPoint(IPAddress.Any, 50001);
             udpSocket.Bind(serverEP);
-            Console.WriteLine("Server ceka igrace da bi poceo igru:");
+            Console.WriteLine("Server ceka igrace da bi poceo igru");
             EndPoint posiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
             //TCP
@@ -27,9 +27,6 @@ namespace Server
             IPEndPoint localEP = new IPEndPoint(IPAddress.Any, 50002);
             tcpSocket.Bind(localEP);
             tcpSocket.Listen();
-
-
-
 
             while (true) {
                 byte[] prijavaBufer= new byte[1024];
@@ -75,6 +72,38 @@ namespace Server
                     {
                         Console.WriteLine("Igrac je spreman za pocetak igre.");
                     }
+
+
+                    Slagalica slagalica = new Slagalica();
+                    slagalica.GenerisiSlova();
+
+                    Console.WriteLine($"Ponudjena slova za igru su: {slagalica.PonudjenaSlova}");
+
+                    string pocetnaSlova = $"{slagalica.PonudjenaSlova}";
+                    byte[] bajtovi = Encoding.UTF8.GetBytes(pocetnaSlova);
+                    povezanSocket.Send(bajtovi);
+
+                    byte[] buffer = new byte[1024];
+                    int primljenoBajtova = povezanSocket.Receive(buffer);
+                    string recIgraca = Encoding.UTF8.GetString(buffer, 0, primljenoBajtova);
+
+                    int poeni = slagalica.ProveriRec(recIgraca);
+                    string rezultat;
+
+                    if (poeni > 0)
+                    {
+                        rezultat = $"Rijec koju ste unijeli je validna! Osvojili ste {poeni} poena.";
+                    }
+                    else
+                    {
+                        rezultat = "Rijec koju ste unijeli nije validna!";
+                    }
+
+                    byte[] rezultatBajtovi = Encoding.UTF8.GetBytes(rezultat);
+                    povezanSocket.Send(rezultatBajtovi);
+
+
+
 
 
 

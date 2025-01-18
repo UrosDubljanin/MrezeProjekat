@@ -38,6 +38,40 @@ namespace Klijent
             string? spreman = Console.ReadLine();
             tcpSocket.Send(Encoding.UTF8.GetBytes(spreman));
 
+            while (true)
+            {
+                byte[] bafer=new byte[1024];
+                try
+                {
+                    int bajti = tcpSocket.Receive(bafer);
+                    string pocetnaSlova = Encoding.UTF8.GetString(bafer, 0, bajti);
+                    Console.WriteLine(pocetnaSlova);
+
+                    Console.WriteLine("Unesite sto duzu rijec sastavljenu od ponudjenih slova: ");
+                    string rijec = Console.ReadLine();
+                    tcpSocket.Send(Encoding .UTF8.GetBytes(rijec));
+
+                    brBajta = tcpSocket.Receive(buffer);
+                    odgovor = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                    Console.WriteLine(odgovor);
+
+                    if (odgovor.Contains("Rijec koju ste unijeli nije validna!") || odgovor.Contains("Osvojili ste"))
+                    {
+                        break;
+                    }
+
+                    Console.WriteLine("Unesite novu reč koristeći ponuđena slova ili pritisnite Enter za izlaz:");
+                    string unos = Console.ReadLine();
+
+
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+
             udpSocket.Close();
             tcpSocket.Close();
         }

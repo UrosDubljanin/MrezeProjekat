@@ -10,3 +10,15 @@ C:\Users\ozren\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\Klase.dll
 C:\Users\ozren\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\refint\Klase.dll
 C:\Users\ozren\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\Klase.pdb
 C:\Users\ozren\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\ref\Klase.dll
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\bin\Debug\net8.0\Klase.deps.json
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\bin\Debug\net8.0\Klase.dll
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\bin\Debug\net8.0\Klase.pdb
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\Klase.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\Klase.AssemblyInfoInputs.cache
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\Klase.AssemblyInfo.cs
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\Klase.csproj.CoreCompileInputs.cache
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\Klase.sourcelink.json
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\Klase.dll
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\refint\Klase.dll
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\Klase.pdb
+C:\Users\Maja\source\repos\MrezeProjekat\Klase\obj\Debug\net8.0\ref\Klase.dll
