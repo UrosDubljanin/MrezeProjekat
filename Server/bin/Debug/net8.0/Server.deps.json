@@ -16,7 +16,10 @@
       },
       "Klase/1.0.0": {
         "runtime": {
-          "Klase.dll": {}
+          "Klase.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       }
     }

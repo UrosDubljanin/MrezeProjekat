@@ -17,7 +17,7 @@ namespace Klijent
 
             //TCP
             Socket tcpSocket=new Socket(AddressFamily.InterNetwork,SocketType.Stream,ProtocolType.Tcp);
-            IPEndPoint serverEPtcp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50002);
+            IPEndPoint serverEPtcp = new IPEndPoint(IPAddress.Loopback, 50002);
             tcpSocket.Connect(serverEPtcp);
 
 

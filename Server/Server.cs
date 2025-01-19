@@ -13,6 +13,7 @@ namespace Server
             //Vezano za igru
             int brojacIgraca = 0;
             List<Igrac> igraci = new List<Igrac>();
+            bool krajIgre = true;
 
 
             //UDP
@@ -28,7 +29,7 @@ namespace Server
             tcpSocket.Bind(localEP);
             tcpSocket.Listen();
 
-            while (true) {
+            while (krajIgre) {
                 byte[] prijavaBufer= new byte[1024];
                 try
                 {
@@ -208,9 +209,12 @@ namespace Server
                             povezanSocket.Send(krajBajtovi);
 
                         }
+                        
                     }
-
-
+                    krajIgre = false;
+                    string kraj = "Igra je zavrsena!";
+                    byte[] krajB = Encoding.UTF8.GetBytes(kraj);
+                    povezanSocket.Send(krajB);
                     povezanSocket.Close();
                 }
                 catch (Exception e)
