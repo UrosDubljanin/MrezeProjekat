@@ -161,7 +161,7 @@ namespace Server
                             KoZnaZna koznazna = new KoZnaZna();
                             koznazna.UcitavanjePitanja();
 
-
+                            int brojPoena = 0;
                             foreach (var pitanje in koznazna.SvaPitanja)
                             {
                                 if (koznazna.OpcijePitanja.TryGetValue(pitanje.Key, out var opcije))
@@ -176,8 +176,16 @@ namespace Server
 
                                     if (int.TryParse(odgovorKlijentaStr, out int odgovorKlijenta))
                                     {
-                                        string rezultat = koznazna.Provjera(pitanje.Key, odgovorKlijenta); 
-                                        byte[] rezultatBajtovi = Encoding.UTF8.GetBytes(rezultat);
+                                        string rezultat = koznazna.Provjera(pitanje.Key, odgovorKlijenta);
+                                        if (rezultat.Contains("Tacan"))
+                                        {
+                                            brojPoena += 10;
+                                        }
+                                        else
+                                        {
+                                            brojPoena -= 5;
+                                        }
+                                        byte[] rezultatBajtovi = Encoding.UTF8.GetBytes(rezultat+$"Osvojili ste {brojPoena} poena");
                                         povezanSocket.Send(rezultatBajtovi); 
 
                                     }
@@ -185,7 +193,7 @@ namespace Server
                                     {
                                         string greska = "Netacan unos. Očekuje se broj 1, 2 ili 3.";
                                         byte[] greskaBajtovi = Encoding.UTF8.GetBytes(greska);
-                                        povezanSocket.Send(greskaBajtovi); 
+                                        povezanSocket.Send(greskaBajtovi);  
                                     }
                                 }
                                 else
