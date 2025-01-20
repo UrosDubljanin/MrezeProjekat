@@ -76,8 +76,12 @@ namespace Server
 
 
                     for (int i = 1; i < delici.Length; i++)
-                    {
-                        if (delici[i] == "sl")
+                    {   
+                        string igra=delici[i];
+                        povezanSocket.Send(Encoding.UTF8.GetBytes(igra));
+                        
+                        
+                        if (igra == "sl")
                         {
                             Slagalica slagalica = new Slagalica();
                             slagalica.GenerisiSlova();
@@ -107,14 +111,14 @@ namespace Server
                             byte[] rezultatBajtovi = Encoding.UTF8.GetBytes(rezultat);
                             povezanSocket.Send(rezultatBajtovi);
 
-                        }else if (delici[i] == "sk")
+                        }else if (igra == "sk")
                         {
                             Skocko skocko = new Skocko();
                             skocko.GenerisiKombinaciju();
 
                             Console.WriteLine($"Trazena kombinacija je {skocko.TrazenaKomb}");
 
-                            string pocetnaSlova = $"Unesite kombinaciju sledecih znakova HTPKSZ";
+                            string pocetnaSlova = "Unesite kombinaciju sledecih znakova HTPKSZ";
                             byte[] bajtovi = Encoding.UTF8.GetBytes(pocetnaSlova);
                             povezanSocket.Send(bajtovi);
 
@@ -157,7 +161,7 @@ namespace Server
                                 brojac++;
                             }
                         }
-                        else
+                        else if(igra=="kzz")
                         {
                             KoZnaZna koznazna = new KoZnaZna();
                             koznazna.UcitavanjePitanja();
@@ -211,6 +215,7 @@ namespace Server
                         }
                         
                     }
+                    povezanSocket.Send(Encoding.UTF8.GetBytes("kraj"));
                     krajIgre = false;
                     string kraj = "Igra je zavrsena!";
                     byte[] krajB = Encoding.UTF8.GetBytes(kraj);
@@ -219,6 +224,7 @@ namespace Server
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e.Message);
                     break;
                 }
             }

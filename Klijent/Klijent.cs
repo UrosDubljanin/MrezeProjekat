@@ -37,78 +37,86 @@ namespace Klijent
             Console.WriteLine(odgovor);
 
             Console.WriteLine();
+            
             string? spreman = Console.ReadLine();
+            
             tcpSocket.Send(Encoding.UTF8.GetBytes(spreman));
+            bool kraj = true;
 
 
-
-
-
-          /*  byte[] bafer = new byte[1024];
-            int bajti = tcpSocket.Receive(bafer);
-            string pocetnaSlova = Encoding.UTF8.GetString(bafer, 0, bajti);      POCETNA PORUKA ZA SKOCKA
-            Console.WriteLine(pocetnaSlova);*/
-
-            while (true)
+            while (kraj)
             {
-                //byte[] bafer = new byte[1024];
+                byte[] bafer = new byte[1024];
+                int bajti;
                 try
                 {
+                    brBajta = tcpSocket.Receive(buffer);
+                    string oznakaIgre = Encoding.UTF8.GetString(buffer, 0, brBajta);
 
-                    /*int bajti = tcpSocket.Receive(bafer);
-                     string pocetnaSlova = Encoding.UTF8.GetString(bafer, 0, bajti);
-                     Console.WriteLine(pocetnaSlova);
-
-                     Console.WriteLine("Unesite sto duzu rijec sastavljenu od ponudjenih slova: ");
-                     string rijec = Console.ReadLine();
-                     tcpSocket.Send(Encoding .UTF8.GetBytes(rijec));                                        SLAGALICA
-
-                     brBajta = tcpSocket.Receive(buffer);
-                     odgovor = Encoding.UTF8.GetString(buffer, 0, brBajta);
-                     Console.WriteLine(odgovor);
-
-                     if (odgovor.Contains("Rijec koju ste unijeli nije validna!") || odgovor.Contains("Osvojili ste"))
-                     {
-                         Console.WriteLine("Unesite novu reč koristeći ponuđena slova ili pritisnite Enter za izlaz:");
-                         string unos = Console.ReadLine()
-                     }*/
-
-
-
-
-                    /* Console.WriteLine("Unesite kombinaciju");
-                     string rijec = Console.ReadLine();
-                     tcpSocket.Send(Encoding.UTF8.GetBytes(rijec));
-
-                     int bajt = tcpSocket.Receive(bafer);
-                     string znakovi = Encoding.UTF8.GetString(bafer, 0, bajt);                      SKOCKO
-                     Console.WriteLine(znakovi);
-
-                     if(znakovi.Contains("4 znaka su"))
-                     {
-                         break;
-                     }*/
-
-
-
-                    byte[] bafer = new byte[1024];
-                    int bajti = tcpSocket.Receive(bafer);
-                    string pitanje = Encoding.UTF8.GetString(bafer, 0, bajti);
-                    Console.WriteLine(pitanje);
-
-                    if (pitanje == "Odgovoreno je na sva pitanja. Kraj igre!")
+                    if (oznakaIgre == "sl")
                     {
-                        break; 
+                        bajti = tcpSocket.Receive(bafer);
+                        string pocetnaSlova = Encoding.UTF8.GetString(bafer, 0, bajti);
+                        Console.WriteLine(pocetnaSlova);
+
+                        Console.WriteLine("Unesite sto duzu rijec sastavljenu od ponudjenih slova: ");
+                        string rijec = Console.ReadLine();
+                        tcpSocket.Send(Encoding.UTF8.GetBytes(rijec));                                                      //SLAGALICA
+
+                        brBajta = tcpSocket.Receive(buffer);
+                        odgovor = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                        Console.WriteLine(odgovor);
                     }
+                    else if (oznakaIgre == "sk")
+                    {
+                        brBajta = tcpSocket.Receive(bafer);
+                        string skocko = Encoding.UTF8.GetString(bafer, 0, brBajta);
+                        Console.WriteLine(skocko);
 
-                    Console.WriteLine("Unesite tacan odgovor: ");
-                    string izabranOdgovor = Console.ReadLine();
-                    tcpSocket.Send(Encoding.UTF8.GetBytes(izabranOdgovor));                      //KO ZNA ZNA
+                        while (true)
+                        {
+                            Console.WriteLine("Unesite kombinaciju");
+                            string rijec = Console.ReadLine();
+                            tcpSocket.Send(Encoding.UTF8.GetBytes(rijec));
 
-                    int bajt = tcpSocket.Receive(bafer);
-                    string provjeraOdgovora = Encoding.UTF8.GetString(bafer, 0, bajt);
-                    Console.WriteLine(provjeraOdgovora);
+                            bajti = tcpSocket.Receive(bafer);
+                            string znakovi = Encoding.UTF8.GetString(bafer, 0, bajti);                     // SKOCKO
+                            Console.WriteLine(znakovi);
 
+                            if (znakovi.Contains("4 znaka su"))
+                            {
+                                Console.WriteLine("Zavrsili ste igru skocko.");
+                                break;
+                            }
+                        }
+                    }
+                    else if (oznakaIgre == "kzz")
+                    {
+                        while (true)
+                        {
+                            bajti = tcpSocket.Receive(bafer);
+                            string pitanje = Encoding.UTF8.GetString(bafer, 0, bajti);
+                            Console.WriteLine(pitanje);
+
+                            if (pitanje == "Odgovoreno je na sva pitanja. Kraj igre!")
+                            {
+                                break;
+                            }
+
+                            Console.WriteLine("Unesite tacan odgovor: ");
+                            string izabranOdgovor = Console.ReadLine();
+                            tcpSocket.Send(Encoding.UTF8.GetBytes(izabranOdgovor));                      //KO ZNA ZNA
+
+                            int bajt = tcpSocket.Receive(bafer);
+                            string provjeraOdgovora = Encoding.UTF8.GetString(bafer, 0, bajt);
+                            Console.WriteLine(provjeraOdgovora);
+                        }
+                    }
+                    else if(oznakaIgre =="kraj")
+                    {
+                        kraj = false;
+                        Console.WriteLine("Zavrsili ste igru.");
+                    }
 
                 }
                 catch (SocketException ex)
