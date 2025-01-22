@@ -24,13 +24,14 @@ namespace Server
             EndPoint posiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
             //TCP
-            Socket tcpSocket=new Socket(AddressFamily.InterNetwork,SocketType.Stream, ProtocolType.Tcp);
+            Socket tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPEndPoint localEP = new IPEndPoint(IPAddress.Any, 50002);
             tcpSocket.Bind(localEP);
             tcpSocket.Listen();
 
-            while (krajIgre) {
-                byte[] prijavaBufer= new byte[1024];
+            while (krajIgre)
+            {
+                byte[] prijavaBufer = new byte[1024];
                 try
                 {
                     int brBajta = udpSocket.ReceiveFrom(prijavaBufer, ref posiljaocEP);
@@ -40,9 +41,9 @@ namespace Server
 
                     bool greskaPrijava = false;
                     int brojIgri = 0;
-                    for(int i = 1; i < delici.Length; i++)
+                    for (int i = 1; i < delici.Length; i++)
                     {
-                        if (delici[i]!="sl" && delici[i]!="sk" && delici[i] != "kzz")
+                        if (delici[i] != "sl" && delici[i] != "sk" && delici[i] != "kzz")
                         {
                             Console.WriteLine("Greska prilikom prijave igraca");
                             greskaPrijava = true;
@@ -56,7 +57,7 @@ namespace Server
                     }
 
                     brojacIgraca++;
-                    Igrac igrac = new Igrac(brojacIgraca, delici[0],brojIgri);
+                    Igrac igrac = new Igrac(brojacIgraca, delici[0], brojIgri);
                     igraci.Add(igrac);
 
                     Console.WriteLine($"Igrac {igrac.KorisnickoIme} se uspesno prijavio i hoce da igra {brojIgri} igri.");
@@ -66,8 +67,8 @@ namespace Server
                     byte[] bajt = Encoding.UTF8.GetBytes(poruka);
                     povezanSocket.Send(bajt);
 
-                    brBajta=povezanSocket.Receive(bajt);
-                    poruka= Encoding.UTF8.GetString(bajt, 0, brBajta);
+                    brBajta = povezanSocket.Receive(bajt);
+                    poruka = Encoding.UTF8.GetString(bajt, 0, brBajta);
                     poruka.ToLower();
                     if (poruka == "spreman")
                     {
@@ -76,11 +77,11 @@ namespace Server
 
 
                     for (int i = 1; i < delici.Length; i++)
-                    {   
-                        string igra=delici[i];
+                    {
+                        string igra = delici[i];
                         povezanSocket.Send(Encoding.UTF8.GetBytes(igra));
-                        
-                        
+
+
                         if (igra == "sl")
                         {
                             Slagalica slagalica = new Slagalica();
@@ -111,7 +112,8 @@ namespace Server
                             byte[] rezultatBajtovi = Encoding.UTF8.GetBytes(rezultat);
                             povezanSocket.Send(rezultatBajtovi);
 
-                        }else if (igra == "sk")
+                        }
+                        else if (igra == "sk")
                         {
                             Skocko skocko = new Skocko();
                             skocko.GenerisiKombinaciju();
@@ -124,7 +126,7 @@ namespace Server
 
                             int brojac = 1;
                             int brojOsvojenihPoena = 0;
-                            while (brojac<6)
+                            while (brojac < 6)
                             {
                                 byte[] buffer = new byte[1024];
                                 int primljenoBajtova = povezanSocket.Receive(buffer);
@@ -132,17 +134,21 @@ namespace Server
 
                                 string rezultat = skocko.ProveriKombinaciju(kombinacijaIgraca);
 
-                                if (rezultat == "4 znaka su na pravom mestu, 0 nisu na mestu.") {
+                                if (rezultat == "4 znaka su na pravom mestu, 0 nisu na mestu.")
+                                {
                                     if (brojac == 1)
                                     {
                                         brojOsvojenihPoena = 30;
-                                    }else if (brojac == 2)
+                                    }
+                                    else if (brojac == 2)
                                     {
                                         brojOsvojenihPoena = 25;
-                                    }else if(brojac == 3)
+                                    }
+                                    else if (brojac == 3)
                                     {
                                         brojOsvojenihPoena = 20;
-                                    }else if (brojac == 4)
+                                    }
+                                    else if (brojac == 4)
                                     {
                                         brojOsvojenihPoena = 15;
                                     }
@@ -150,7 +156,7 @@ namespace Server
                                     {
                                         brojOsvojenihPoena = 10;
                                     }
-                                    byte[] nizz = Encoding.UTF8.GetBytes(rezultat+$"Osvojili ste {brojOsvojenihPoena} poena!");
+                                    byte[] nizz = Encoding.UTF8.GetBytes(rezultat + $"Osvojili ste {brojOsvojenihPoena} poena!");
                                     povezanSocket.Send(nizz);
                                     break;
                                 }
@@ -161,7 +167,7 @@ namespace Server
                                 brojac++;
                             }
                         }
-                        else if(igra=="kzz")
+                        else if (igra == "kzz")
                         {
                             KoZnaZna koznazna = new KoZnaZna();
                             koznazna.UcitavanjePitanja();
@@ -190,15 +196,15 @@ namespace Server
                                         {
                                             brojPoena -= 5;
                                         }
-                                        byte[] rezultatBajtovi = Encoding.UTF8.GetBytes(rezultat+$"Osvojili ste {brojPoena} poena");
-                                        povezanSocket.Send(rezultatBajtovi); 
+                                        byte[] rezultatBajtovi = Encoding.UTF8.GetBytes(rezultat + $"Osvojili ste {brojPoena} poena");
+                                        povezanSocket.Send(rezultatBajtovi);
 
                                     }
                                     else
                                     {
                                         string greska = "Netacan unos. Očekuje se broj 1, 2 ili 3.";
                                         byte[] greskaBajtovi = Encoding.UTF8.GetBytes(greska);
-                                        povezanSocket.Send(greskaBajtovi);  
+                                        povezanSocket.Send(greskaBajtovi);
                                     }
                                 }
                                 else
@@ -213,7 +219,7 @@ namespace Server
                             povezanSocket.Send(krajBajtovi);
 
                         }
-                        
+
                     }
                     povezanSocket.Send(Encoding.UTF8.GetBytes("kraj"));
                     krajIgre = false;
@@ -232,10 +238,10 @@ namespace Server
 
 
 
-           
+
             udpSocket.Close();
             tcpSocket.Close();
- 
+
         }
     }
 }
