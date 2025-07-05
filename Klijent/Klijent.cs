@@ -75,7 +75,6 @@ namespace Klijent
 
                         while (true)
                         {
-                            Console.WriteLine("Unesite kombinaciju");
                             string rijec = Console.ReadLine();
                             tcpSocket.Send(Encoding.UTF8.GetBytes(rijec));
 
@@ -105,11 +104,12 @@ namespace Klijent
 
                             Console.WriteLine("Unesite tacan odgovor: ");
                             string izabranOdgovor = Console.ReadLine();
-                            tcpSocket.Send(Encoding.UTF8.GetBytes(izabranOdgovor));                      //KO ZNA ZNA
+                            tcpSocket.Send(Encoding.UTF8.GetBytes(izabranOdgovor));
 
                             int bajt = tcpSocket.Receive(bafer);
                             string provjeraOdgovora = Encoding.UTF8.GetString(bafer, 0, bajt);
                             Console.WriteLine(provjeraOdgovora);
+
                         }
                     }
                     else if (oznakaIgre == "kraj")
