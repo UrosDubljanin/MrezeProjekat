@@ -16,6 +16,7 @@ namespace Server
             bool krajIgre = true;
 
             List<Socket> sviKlijenti = new List<Socket>();
+            Dictionary<Socket, double> KonacniRezultat = new Dictionary<Socket, double>();
 
             //UDP
             Socket udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -135,7 +136,13 @@ namespace Server
 
                     Console.WriteLine("Svi klijenti su spremni, možemo nastaviti.");
 
-                    Dictionary<Socket, double> KonacniRezultat = new Dictionary<Socket, double>();
+                    foreach (var klijent in sviKlijenti)
+                    {
+                        KonacniRezultat[klijent] = 0; 
+                    }
+
+
+
 
                     //IGRE
                     for (int i = 1; i < delici.Length; i++)
@@ -190,13 +197,6 @@ namespace Server
                                 Thread.Sleep(50);
                             }
 
-                            Dictionary<Socket, double> poeni = new Dictionary<Socket, double>();
-
-                            foreach (var klijent in sviKlijenti)
-                            {
-                                poeni[klijent] = 0;
-                            }
-
                             var sortiraniOdgovori = odgovori
                                 .Where(o => slagalica.ProveriRec(o.Value.rijec) > 0)
                                 .OrderBy(o => o.Value.vrijeme)
@@ -235,8 +235,8 @@ namespace Server
                                             osvojeni = poeniZaRec - umanjenje;
                                         }
 
-                                        poeni[klijent] += osvojeni;
-                                        rezultat = $"Vaša reč: \"{rec}\" ({rec.Length} slova). Osvojeno: {osvojeni} poena. Ukupno: {poeni[klijent]}";
+                                        KonacniRezultat[klijent] += osvojeni;
+                                        rezultat = $"Vaša reč: \"{rec}\" ({rec.Length} slova). Osvojeno: {osvojeni} poena. Ukupno: {KonacniRezultat[klijent]}";
                                     }
                                 }
 
@@ -308,7 +308,8 @@ namespace Server
                                                 default: brojOsvojenihPoena = 10; break;
                                             }
 
-                                            string obav = rezultat + $" Osvojili ste {brojOsvojenihPoena} poena!";
+                                            KonacniRezultat[klijent] += brojOsvojenihPoena;
+                                            string obav = rezultat + $" Osvojili ste {KonacniRezultat} poena!";
                                             klijent.Send(Encoding.UTF8.GetBytes(obav));
                                             break;
                                         }
@@ -332,13 +333,6 @@ namespace Server
                         {
                             KoZnaZna kzz = new KoZnaZna();
                             kzz.UcitavanjePitanja();
-
-                            // Poeni po klijentu
-                            Dictionary<Socket, double> poeni = new Dictionary<Socket, double>(); //recnik sa kljucem poeni
-                            foreach (var klijent in sviKlijenti)
-                            {
-                                poeni[klijent] = 0;                                        //svaki klijent(igrac) ima na pocetku 0 poena
-                            }
 
                             // Za svako pitanje
                             foreach (var pitanje in kzz.SvaPitanja)
@@ -424,7 +418,7 @@ namespace Server
 
                                             if (klijent == prviTacan)
                                             {
-                                                poeni[klijent] += poeniZaPitanje;  //Ako je klijent prvi odgovorio njemu ide svih 10 poena
+                                                KonacniRezultat[klijent] += poeniZaPitanje;  //Ako je klijent prvi odgovorio njemu ide svih 10 poena
                                             }
                                             else
                                             {
@@ -433,31 +427,24 @@ namespace Server
                                                 if ((int)kasnjenje.TotalSeconds < 30)
                                                 {
                                                     double umanjenje=0.1 * poeniZaPitanje;          //Ako klijent kasni sa odgovorom do 30s dobija 10% manje poena
-                                                    poeni[klijent] = poeniZaPitanje - umanjenje;
+                                                    KonacniRezultat[klijent] += poeniZaPitanje - umanjenje;
 
                                                 }                                
 
                                                 provjera += $" (kasnio/la {kasnjenje.Seconds}s)";
                                             }
 
-                                            rezultat = provjera + $" Trenutni poeni: {poeni[klijent]}";
+                                            rezultat = provjera + $" Trenutni poeni: {KonacniRezultat[klijent]}";
                                         }
                                         else
                                         {
-                                            poeni[klijent] -= 5;
-                                            rezultat = provjera + $" Trenutni poeni: {poeni[klijent]}";
+                                            KonacniRezultat[klijent] -= 5;
+                                            rezultat = provjera + $" Trenutni poeni: {KonacniRezultat[klijent]}";
                                         }
                                     }
 
                                     klijent.Send(Encoding.UTF8.GetBytes(rezultat));
                                 }
-                            }
-
-                            foreach (var klijent in sviKlijenti)
-                            {
-                                string mess1 = $"Kraj igre. Ukupan broj poena: {poeni[klijent]}";
-                                klijent.Send(Encoding.UTF8.GetBytes(mess1));
-                                klijent.Close();
                             }
                         }
                     }
@@ -468,13 +455,11 @@ namespace Server
                     break;
                 }
             }
-                    
 
+            udpSocket.Close();
+            tcpSocket.Close();
 
-
-
-                    udpSocket.Close();
-                    tcpSocket.Close();
+            Environment.Exit(0); 
 
         }
     }
