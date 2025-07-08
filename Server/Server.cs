@@ -309,7 +309,7 @@ namespace Server
                                             }
 
                                             KonacniRezultat[klijent] += brojOsvojenihPoena;
-                                            string obav = rezultat + $" Osvojili ste {KonacniRezultat} poena!";
+                                            string obav = rezultat + $" Osvojili ste {KonacniRezultat[klijent]} poena!";
                                             klijent.Send(Encoding.UTF8.GetBytes(obav));
                                             break;
                                         }
@@ -454,6 +454,33 @@ namespace Server
                     Console.WriteLine(e.Message);
                     break;
                 }
+            }
+
+            Console.WriteLine("\n--- KRAJ IGARA ---");
+            Console.WriteLine("Konačni rezultati:");
+
+            foreach (var klijent in sviKlijenti)
+            {
+                double ukupno = KonacniRezultat.ContainsKey(klijent) ? KonacniRezultat[klijent] : 0;
+                string finalnaPoruka = $"KRAJ IGARA.\nVaš ukupan broj poena: {ukupno}";
+
+                try
+                {
+                    klijent.Send(Encoding.UTF8.GetBytes(finalnaPoruka));
+                    Console.WriteLine($"{klijent.RemoteEndPoint} - {ukupno} poena");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Greška pri slanju rezultata klijentu {klijent.RemoteEndPoint}: {ex.Message}");
+                }
+
+                klijent.Close();
+            }
+
+            foreach (var klijent in sviKlijenti)
+            {
+                klijent.Send(Encoding.UTF8.GetBytes("kraj"));
+                klijent.Close();
             }
 
             udpSocket.Close();
