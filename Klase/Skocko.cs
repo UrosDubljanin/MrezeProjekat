@@ -59,7 +59,7 @@ namespace Klase
                 }
             }
 
-            return $"{naPravomMestu} znaka su na pravom mestu, {naPogresnomMestu} nisu na mestu.";
+            return $"{naPravomMestu} znaka su na pravom mestu, {naPogresnomMestu} nisu na mestu.|{naPravomMestu}|{naPogresnomMestu}|";
         }
 
     }

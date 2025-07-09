@@ -73,19 +73,60 @@ namespace Klijent
                         string skocko = Encoding.UTF8.GetString(bafer, 0, brBajta);
                         Console.WriteLine(skocko);
 
-                        while (true)
+                        while (true)                                                                        // SKOCKO
                         {
                             string rijec = Console.ReadLine();
                             tcpSocket.Send(Encoding.UTF8.GetBytes(rijec));
 
                             bajti = tcpSocket.Receive(bafer);
-                            string znakovi = Encoding.UTF8.GetString(bafer, 0, bajti);                     // SKOCKO
-                            Console.WriteLine(znakovi);
-
+                            string znakovi = Encoding.UTF8.GetString(bafer, 0, bajti);
                             if (znakovi.Contains("4 znaka su"))
                             {
+                                string[] poruka = znakovi.Split('|');
+                                string krajSkocka = poruka[0] + poruka[3];
+                                Console.WriteLine(krajSkocka);
                                 Console.WriteLine("Zavrsili ste igru skocko.");
                                 break;
+                            }
+                            else
+                            {
+                                string[] poruka = znakovi.Split('|');
+
+                                Console.WriteLine(poruka[0]);
+                                int tMesto = int.Parse(poruka[1]);
+                                int pMesto = int.Parse(poruka[2]);
+                                if (tMesto == 0 && pMesto == 0)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("****");
+                                    Console.ResetColor();
+                                }
+                                else
+                                {
+                                    int brojZnakova = 0;
+                                    for (int i = 0; i < tMesto; i++)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Green;
+                                        Console.Write('*');
+                                        brojZnakova++;
+                                        Console.ResetColor();
+                                    }
+                                    for (int i = 0; i < pMesto; i++)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Blue;
+                                        Console.Write('*');
+                                        brojZnakova++;
+                                        Console.ResetColor();
+                                    }
+                                    while (brojZnakova != 4)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.Write('*');
+                                        brojZnakova++;
+                                        Console.ResetColor();
+                                    }
+                                    Console.WriteLine();
+                                }
                             }
                         }
                     }
