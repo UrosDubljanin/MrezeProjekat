@@ -14,6 +14,21 @@ namespace Klijent
             IPEndPoint serverEPudp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50001);
             EndPoint posiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
+            /*string izbor = "";
+            do {
+                Console.WriteLine("Molim vas da izaberete nacin igranja:");
+                Console.WriteLine("1. Samostalna igra");
+                Console.WriteLine("2. Igra protiv drugog igraca");
+                izbor=Console.ReadLine();
+            } while (izbor!="1" && izbor!="2");
+
+            byte[] biranjePoruka = new byte[1024];
+            biranjePoruka = Encoding.UTF8.GetBytes(izbor);
+            udpSocket.SendTo(biranjePoruka, 0, biranjePoruka.Length, SocketFlags.None, serverEPudp);*/
+
+            EndPoint serverEP = new IPEndPoint(IPAddress.Any, 0);
+            
+            
             Console.WriteLine("Izvršite prijavu u formatu: PRIJAVA: [ime/nadimak], [igre odvojene zarezima (sl, sk, kzz)]");
             Console.Write("PRIJAVA: ");
             string prijava = "PRIJAVA:" + Console.ReadLine();
@@ -80,8 +95,8 @@ namespace Klijent
                             if (znakovi.Contains("4 znaka su"))
                             {
                                 string[] poruka = znakovi.Split('|');
-                                string krajSkocka = poruka[0] + poruka[3];
-                                Console.WriteLine(krajSkocka);
+                                string odgovorNakonPokusaja = poruka[0] + poruka[3];
+                                Console.WriteLine(odgovorNakonPokusaja);
                                 Console.WriteLine("Zavrsili ste igru skocko.");
                                 break;
                             }
@@ -126,6 +141,10 @@ namespace Klijent
                                 }
                             }
                         }
+                        brBajta = tcpSocket.Receive(bafer);
+                        string krajSkocka = Encoding.UTF8.GetString(bafer, 0, brBajta);
+                        Console.WriteLine(krajSkocka);
+
                     }
                     else if (oznakaIgre == "kzz")
                     {

@@ -12,6 +12,7 @@ namespace Server
         static void Main(string[] args)
         {
             //Vezano za igru
+            int brojTrazenihIgraca = 2;
             int brojacIgraca = 0;
             bool krajIgre = true;
             Dictionary<Socket, Igrac> igraci = new Dictionary<Socket, Igrac>();
@@ -31,7 +32,6 @@ namespace Server
             tcpSocket.Bind(new IPEndPoint(IPAddress.Any, 50002));
             tcpSocket.Listen(10);
 
-
             while (krajIgre)
             {
                 byte[] prijavaBufer = new byte[1024];
@@ -39,7 +39,7 @@ namespace Server
                 try
                 {
                     Console.WriteLine("Povežite sve klijente, pa pritisnite ENTER...");
-                    while (brojacIgraca<2) {
+                    while (brojacIgraca<brojTrazenihIgraca) {
                         int brBajta = udpSocket.ReceiveFrom(prijavaBufer, ref posiljaocEP);
                         string poruka = Encoding.UTF8.GetString(prijavaBufer, 0, brBajta);
                         string[] delovi = poruka.Split(":");
@@ -269,7 +269,7 @@ namespace Server
                                 int brojac = 1;
                                 int brojOsvojenihPoena = 0;
 
-                                while (brojac <= 6)
+                                while (brojac < 7)
                                 {
                                     List<Socket> spremniZaCitanje = new List<Socket> { klijent };   // Pravimo listu klijenata spremnih za citanje i stavljamo tu prvog klijenta
                                     Socket.Select(spremniZaCitanje, null, null, 100*20000000);      // Provjeravamo da li taj klijent ima nesto za citanje
@@ -334,6 +334,8 @@ namespace Server
                                         continue;
                                     }
                                 }
+                                string krajSkocka = "Zavrsili ste igru skocko. Osvojili ste " +igraci[klijent].bodovi[1].ToString() + " poena.";
+                                klijent.Send(Encoding.UTF8.GetBytes(krajSkocka));
                             }
 
                         }
