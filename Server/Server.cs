@@ -149,6 +149,7 @@ namespace Server
 
                     Console.WriteLine("Svi klijenti su spremni, možemo nastaviti.");
 
+                    listIgri.Add("kraj igara");
                     igrice = listIgri.ToArray();
 
                     //IGRE
@@ -339,7 +340,7 @@ namespace Server
                             }
 
                         }
-                        else
+                        else if (igrice[i]=="kzz")
                         {
                             KoZnaZna kzz = new KoZnaZna();
                             kzz.UcitavanjePitanja();
@@ -456,10 +457,17 @@ namespace Server
 
                                     klijent.Send(Encoding.UTF8.GetBytes(rezultat));
                                 }
+                                foreach(var klijent in sviKlijenti)
+                                {
+                                    klijent.Send(Encoding.UTF8.GetBytes("Odgovoreno je na sva pitanja. Kraj igre!"));
+                                }
                             }
                         }
+                        else if (igrice[i]=="kraj igara")
+                        {
+                            krajIgre = false;
+                        }
                     }
-                    krajIgre = false;
                 }
                 catch (Exception e)
                 {
@@ -492,6 +500,7 @@ namespace Server
             {
                 tabela += igraci[klijent].KorisnickoIme + "\t" + igraci[klijent].bodovi[0].ToString() + "\t" + igraci[klijent].bodovi[1].ToString() + "\t" + igraci[klijent].bodovi[2].ToString() + "\t" + igraci[klijent].izracunajUkupno().ToString() + "\n";
             }
+            Console.WriteLine(tabela);
 
             foreach (var klijent in sviKlijenti)
             {

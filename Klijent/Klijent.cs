@@ -49,6 +49,7 @@ namespace Klijent
                 {
                     brBajta = tcpSocket.Receive(buffer);
                     string oznakaIgre = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                    Console.WriteLine(oznakaIgre);
 
                     if (oznakaIgre == "sl")
                     {
@@ -133,16 +134,11 @@ namespace Klijent
                     }
                     else if (oznakaIgre == "kzz")
                     {
-                        while (true)
+                        for(int i=0;i<3;i++)
                         {
                             bajti = tcpSocket.Receive(bafer);
                             string pitanje = Encoding.UTF8.GetString(bafer, 0, bajti);
                             Console.WriteLine(pitanje);
-
-                            if (pitanje == "Odgovoreno je na sva pitanja. Kraj igre!")
-                            {
-                                break;
-                            }
 
                             Console.WriteLine("Unesite tacan odgovor: ");
                             string izabranOdgovor = Console.ReadLine();
