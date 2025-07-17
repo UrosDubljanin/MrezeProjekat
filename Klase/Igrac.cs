@@ -15,11 +15,16 @@ namespace Klase
         public string KorisnickoIme { get; set; } = "";
         public int[] bodovi { get; set; }= new int[3];
 
-         public Igrac(int iD, string korisnickoIme)
+        public Igrac(int iD, string korisnickoIme)
         {
             ID = iD;
             KorisnickoIme = korisnickoIme;
             bodovi = new int[3] {0,0,0};
+        }
+        public int izracunajUkupno()
+        {
+            int rezultat = bodovi[0] + bodovi[1] + bodovi[2];
+            return rezultat;
         }
     }
 }

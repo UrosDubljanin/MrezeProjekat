@@ -16,9 +16,9 @@ namespace Server
             int brojacIgraca = 0;
             bool krajIgre = true;
             Dictionary<Socket, Igrac> igraci = new Dictionary<Socket, Igrac>();
+            List<string> listIgri = new List<string>();
 
             List<Socket> sviKlijenti = new List<Socket>();
-            Dictionary<Socket, int> KonacniRezultat = new Dictionary<Socket, int>();
             
 
             //UDP
@@ -44,26 +44,33 @@ namespace Server
                         string poruka = Encoding.UTF8.GetString(prijavaBufer, 0, brBajta);
                         string[] delovi = poruka.Split(":");
                         string[] delici = delovi[1].Split(",");
-                        igrice = delici;
 
-
-
-                        bool greskaPrijava = false;
-                        int brojIgri = 0;
-                        for (int i = 1; i < delici.Length; i++)
+                        listIgri = delici.ToList();
+                        
+                        if (delici.Length>1)
                         {
-                            if (delici[i] != "sl" && delici[i] != "sk" && delici[i] != "kzz")
-                            {
-                                Console.WriteLine("Greska prilikom prijave igraca");
-                                greskaPrijava = true;
-                                break;
+                            listIgri.RemoveAt(1);
+                            listIgri.RemoveAt(0);
+                            brojTrazenihIgraca = 1;
+                            for (int i = 2; i < delici.Length-1; i++)
+                            {   
+                                if (delici[i] != "sl" && delici[i] != "sk" && delici[i] != "kzz")
+                                {
+                                    Console.WriteLine("Greska prilikom prijave igraca");
+                                    break;
+                                }
+
                             }
-                            brojIgri++;
                         }
-                        if (greskaPrijava)
+                        else
                         {
-                            break;
+                            listIgri.Add("sl");
+                            listIgri.Add("sk");
+                            listIgri.Add("kzz");
+                            listIgri.RemoveAt(0);
+                            brojTrazenihIgraca = 2;
                         }
+                        
                         brojacIgraca++;
 
                         if (tcpSocket.Poll(1500 * 1000, SelectMode.SelectRead))
@@ -142,16 +149,10 @@ namespace Server
 
                     Console.WriteLine("Svi klijenti su spremni, možemo nastaviti.");
 
-                    foreach (var klijent in sviKlijenti)
-                    {
-                        KonacniRezultat[klijent] = 0; 
-                    }
-
-
-
+                    igrice = listIgri.ToArray();
 
                     //IGRE
-                    for (int i = 1; i < igrice.Length; i++)
+                    for (int i = 0; i < igrice.Length; i++)
                     {
                         string igra = igrice[i];
 
@@ -241,9 +242,8 @@ namespace Server
                                             osvojeni = poeniZaRec - umanjenje;
                                         }
 
-                                        KonacniRezultat[klijent] += (int)Math.Round(osvojeni);
                                         igraci[klijent].bodovi[0] = (int)Math.Round(osvojeni);
-                                        rezultat = $"Vaša reč: \"{rec}\" ({rec.Length} slova). Osvojeno: {osvojeni} poena. Ukupno: {KonacniRezultat[klijent]}";
+                                        rezultat = $"Vaša reč: \"{rec}\" ({rec.Length} slova). Osvojeno: {osvojeni} poena. Ukupno: {igraci[klijent].bodovi[0]}";
                                     }
                                 }
 
@@ -315,9 +315,9 @@ namespace Server
                                                 default: brojOsvojenihPoena = 10; break;
                                             }
 
-                                            KonacniRezultat[klijent] += brojOsvojenihPoena;
+                                            
                                             igraci[klijent].bodovi[1] = brojOsvojenihPoena;
-                                            string obav = rezultat + $" Osvojili ste {KonacniRezultat[klijent]} poena!";
+                                            string obav = rezultat + $" Osvojili ste {igraci[klijent].bodovi[1]} poena!";
                                             klijent.Send(Encoding.UTF8.GetBytes(obav));
                                             break;
                                         }
@@ -428,8 +428,7 @@ namespace Server
 
                                             if (klijent == prviTacan)
                                             {
-                                                KonacniRezultat[klijent] += poeniZaPitanje;  //Ako je klijent prvi odgovorio njemu ide svih 10 poena
-                                                igraci[klijent].bodovi[2] +=poeniZaPitanje;
+                                               igraci[klijent].bodovi[2] += poeniZaPitanje; //Ako je klijent prvi odgovorio njemu ide svih 10 poena
 
                                             }
                                             else
@@ -439,7 +438,6 @@ namespace Server
                                                 if ((int)kasnjenje.TotalSeconds < 30)
                                                 {
                                                     double umanjenje=0.1 * poeniZaPitanje;          //Ako klijent kasni sa odgovorom do 30s dobija 10% manje poena
-                                                    KonacniRezultat[klijent] += (int)Math.Round(poeniZaPitanje - umanjenje);
                                                     igraci[klijent].bodovi[2] += (int)Math.Round(poeniZaPitanje - umanjenje); 
 
                                                 }                                
@@ -447,13 +445,12 @@ namespace Server
                                                 provjera += $" (kasnio/la {kasnjenje.Seconds}s)";
                                             }
 
-                                            rezultat = provjera + $" Trenutni poeni: {KonacniRezultat[klijent]}";
+                                            rezultat = provjera + $" Trenutni poeni: {igraci[klijent].bodovi[2]}";
                                         }
                                         else
                                         {
-                                            KonacniRezultat[klijent] -= 5;
                                             igraci[klijent].bodovi[2] -= 5;
-                                            rezultat = provjera + $" Trenutni poeni: {KonacniRezultat[klijent]}";
+                                            rezultat = provjera + $" Trenutni poeni: {igraci[klijent].bodovi[2]}";
                                         }
                                     }
 
@@ -493,7 +490,7 @@ namespace Server
  
             foreach (var klijent in sviKlijenti)
             {
-                tabela += igraci[klijent].KorisnickoIme + "\t" + igraci[klijent].bodovi[0].ToString() + "\t" + igraci[klijent].bodovi[1].ToString() + "\t" + igraci[klijent].bodovi[2].ToString() + "\t" + KonacniRezultat[klijent].ToString() + "\n";
+                tabela += igraci[klijent].KorisnickoIme + "\t" + igraci[klijent].bodovi[0].ToString() + "\t" + igraci[klijent].bodovi[1].ToString() + "\t" + igraci[klijent].bodovi[2].ToString() + "\t" + igraci[klijent].izracunajUkupno().ToString() + "\n";
             }
 
             foreach (var klijent in sviKlijenti)
@@ -508,20 +505,7 @@ namespace Server
                     Console.WriteLine($"Greška pri slanju tabele klijentu {klijent.RemoteEndPoint}: {ex.Message}");
                 }
 
-                double ukupno = KonacniRezultat.ContainsKey(klijent) ? KonacniRezultat[klijent] : 0;
-                string finalnaPoruka = $"KRAJ IGARA.\nVaš ukupan broj poena: {ukupno}";
-
-                try
-                {
-                    klijent.Send(Encoding.UTF8.GetBytes(finalnaPoruka));
-                    Console.WriteLine($"{klijent.RemoteEndPoint} - {ukupno} poena");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Greška pri slanju rezultata klijentu {klijent.RemoteEndPoint}: {ex.Message}");
-                }
                 klijent.Close();
-
             }
 
 
