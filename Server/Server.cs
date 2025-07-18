@@ -429,7 +429,7 @@ namespace Server
 
                                             if (klijent == prviTacan)
                                             {
-                                               igraci[klijent].bodovi[2] += poeniZaPitanje; //Ako je klijent prvi odgovorio njemu ide svih 10 poena
+                                                igraci[klijent].bodovi[2] += poeniZaPitanje; //Ako je klijent prvi odgovorio njemu ide svih 10 poena
 
                                             }
                                             else
@@ -438,10 +438,10 @@ namespace Server
 
                                                 if ((int)kasnjenje.TotalSeconds < 30)
                                                 {
-                                                    double umanjenje=0.1 * poeniZaPitanje;          //Ako klijent kasni sa odgovorom do 30s dobija 10% manje poena
-                                                    igraci[klijent].bodovi[2] += (int)Math.Round(poeniZaPitanje - umanjenje); 
+                                                    double umanjenje = 0.1 * poeniZaPitanje;          //Ako klijent kasni sa odgovorom do 30s dobija 10% manje poena
+                                                    igraci[klijent].bodovi[2] += (int)Math.Round(poeniZaPitanje - umanjenje);
 
-                                                }                                
+                                                }
 
                                                 provjera += $" (kasnio/la {kasnjenje.Seconds}s)";
                                             }
@@ -457,15 +457,13 @@ namespace Server
 
                                     klijent.Send(Encoding.UTF8.GetBytes(rezultat));
                                 }
-                                foreach(var klijent in sviKlijenti)
-                                {
-                                    klijent.Send(Encoding.UTF8.GetBytes("Odgovoreno je na sva pitanja. Kraj igre!"));
-                                }
                             }
-                        }
-                        else if (igrice[i]=="kraj igara")
-                        {
-                            krajIgre = false;
+                            foreach (var klijent in sviKlijenti)
+                            {
+                                Console.WriteLine("asghfsjkfh");
+                                string kraj = "Odgovoreno je na sva pitanja. Kraj igre!";
+                                klijent.Send(Encoding.UTF8.GetBytes(kraj));
+                            }
                         }
                     }
                 }
@@ -475,22 +473,6 @@ namespace Server
                     break;
                 }
             }
-            string javiKrajIgara = "kraj igara";
-            foreach (var klijent in sviKlijenti)
-            {
-
-                try
-                {
-                    klijent.Send(Encoding.UTF8.GetBytes(javiKrajIgara));
-                    
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Greška pri javljanju kraja igara klijentu {klijent.RemoteEndPoint}: {ex.Message}");
-                }
-
-            }
-
 
             Console.WriteLine("\n--- KRAJ IGARA ---");
             Console.WriteLine("Konačni rezultati:");

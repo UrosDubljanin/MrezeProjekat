@@ -40,6 +40,7 @@ namespace Klijent
             tcpSocket.Send(Encoding.UTF8.GetBytes(spreman));
             bool kraj = true;
 
+            bool krajIgre = true;
 
             while (kraj)
             {
@@ -134,12 +135,18 @@ namespace Klijent
                     }
                     else if (oznakaIgre == "kzz")
                     {
-                        for(int i=0;i<3;i++)
+                        while (krajIgre)
                         {
                             bajti = tcpSocket.Receive(bafer);
-                            string pitanje = Encoding.UTF8.GetString(bafer, 0, bajti);
-                            Console.WriteLine(pitanje);
+                            string poruka = Encoding.UTF8.GetString(bafer, 0, bajti);
 
+                            if (poruka == "Odgovoreno je na sva pitanja. Kraj igre!")
+                            {
+                                krajIgre = false;
+                                break;
+                            }
+
+                            Console.WriteLine(poruka);
                             Console.WriteLine("Unesite tacan odgovor: ");
                             string izabranOdgovor = Console.ReadLine();
                             tcpSocket.Send(Encoding.UTF8.GetBytes(izabranOdgovor));
@@ -147,9 +154,11 @@ namespace Klijent
                             int bajt = tcpSocket.Receive(bafer);
                             string provjeraOdgovora = Encoding.UTF8.GetString(bafer, 0, bajt);
                             Console.WriteLine(provjeraOdgovora);
-
                         }
+
+                        
                     }
+
                     else if (oznakaIgre == "kraj igara")
                     {
                         kraj = false;
