@@ -415,7 +415,6 @@ namespace Server
                                             }
                                             else
                                             {
-                                                Console.WriteLine(odgovorStr);
                                                 string mess = "Nepravilan unos. Očekuje se broj 1, 2 ili 3.";
                                                 klijent.Send(Encoding.UTF8.GetBytes(mess));
                                             }
@@ -482,7 +481,6 @@ namespace Server
                             }
                             foreach (var klijent in sviKlijenti)
                             {
-                                Console.WriteLine("asghfsjkfh igara");
                                 string kraj = "Odgovoreno je na sva pitanja. Kraj igre!";
                                 klijent.Send(Encoding.UTF8.GetBytes(kraj));
                                 System.Threading.Thread.Sleep(1000);
