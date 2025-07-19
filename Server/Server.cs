@@ -252,6 +252,7 @@ namespace Server
                                 }
 
                                 klijent.Send(Encoding.UTF8.GetBytes(rezultat));
+                                System.Threading.Thread.Sleep(1000);
                             }
 
 
@@ -275,8 +276,9 @@ namespace Server
 
                                 while (brojac < 7)
                                 {
+                                    
                                     List<Socket> spremniZaCitanje = new List<Socket> { klijent };   // Pravimo listu klijenata spremnih za citanje i stavljamo tu prvog klijenta
-                                    Socket.Select(spremniZaCitanje, null, null, 100*20000000);      // Provjeravamo da li taj klijent ima nesto za citanje
+                                    Socket.Select(spremniZaCitanje, null, null, 10000000);      // Provjeravamo da li taj klijent ima nesto za citanje
 
                                     if (spremniZaCitanje.Count > 0)
                                     {
@@ -308,7 +310,7 @@ namespace Server
 
                                         string rezultat = skocko.ProveriKombinaciju(kombinacijaIgraca);
 
-                                        if (rezultat.StartsWith("4 znaka su na pravom mestu"))
+                                        if (rezultat.Contains("4 znaka su na pravom mestu"))
                                         {
                                             switch (brojac)
                                             {
@@ -328,18 +330,33 @@ namespace Server
                                         else
                                         {
                                             klijent.Send(Encoding.UTF8.GetBytes(rezultat));
+                                            System.Threading.Thread.Sleep(1000);
                                         }
-
-                                        brojac++;
                                     }
                                     else
                                     {
                                         Console.WriteLine("Klijent nije poslao ništa u zadatom vremenu.");
                                         continue;
                                     }
+                                    brojac++;
                                 }
+                                if (brojac == 7)
+                                {
+                                    System.Threading.Thread.Sleep(1000);
+                                    byte[] fantom = new byte[1024];
+                                    if (klijent.Available > 0)
+                                    {
+                                        klijent.Receive(fantom);
+                                    }
+                                    string krajOmasio = "Niste pogodili.";
+                                    
+                                    klijent.Send(Encoding.UTF8.GetBytes(krajOmasio));
+                                    System.Threading.Thread.Sleep(500);
+                                }
+                                
                                 string krajSkocka = "Zavrsili ste igru skocko. Osvojili ste " +igraci[klijent].bodovi[1].ToString() + " poena.";
                                 klijent.Send(Encoding.UTF8.GetBytes(krajSkocka));
+                                System.Threading.Thread.Sleep(1000);
                             }
 
                         }
@@ -370,7 +387,7 @@ namespace Server
                                 while ((DateTime.Now - pocetak) < timeout && odgovori.Count < sviKlijenti.Count) //ovdje provjeravamo da li su svi igraci odgovorili prije 30s
                                 {
                                     List<Socket> spremni = new List<Socket>(sviKlijenti);       // U listu spremnih klijenata stavljamo sve klijente iz liste klijenata
-                                    Socket.Select(spremni, null, null, 5000000);      // Provjeravamo da li je klijent poslao odgovor
+                                    Socket.Select(spremni, null, null, 10000000);      // Provjeravamo da li je klijent poslao odgovor
 
                                     foreach (var klijent in spremni)
                                     {
@@ -398,6 +415,7 @@ namespace Server
                                             }
                                             else
                                             {
+                                                Console.WriteLine(odgovorStr);
                                                 string mess = "Nepravilan unos. Očekuje se broj 1, 2 ili 3.";
                                                 klijent.Send(Encoding.UTF8.GetBytes(mess));
                                             }
@@ -459,6 +477,7 @@ namespace Server
                                     }
 
                                     klijent.Send(Encoding.UTF8.GetBytes(rezultat));
+                                    System.Threading.Thread.Sleep(1000);
                                 }
                             }
                             foreach (var klijent in sviKlijenti)
@@ -466,6 +485,8 @@ namespace Server
                                 Console.WriteLine("asghfsjkfh igara");
                                 string kraj = "Odgovoreno je na sva pitanja. Kraj igre!";
                                 klijent.Send(Encoding.UTF8.GetBytes(kraj));
+                                System.Threading.Thread.Sleep(1000);
+
                             }
                         }
                     }
@@ -500,6 +521,11 @@ namespace Server
                     Console.WriteLine($"Greška pri slanju tabele klijentu {klijent.RemoteEndPoint}: {ex.Message}");
                 }
 
+                
+            }
+            System.Threading.Thread.Sleep(1000);
+            foreach (var klijent in sviKlijenti)
+            {
                 klijent.Close();
             }
 

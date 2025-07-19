@@ -54,95 +54,106 @@ namespace Klijent
 
                     if (oznakaIgre == "sl")
                     {
-                        bajti = tcpSocket.Receive(bafer);
-                        string pocetnaSlova = Encoding.UTF8.GetString(bafer, 0, bajti);
+                        byte[] baferSl = new byte[1024];
+                        bajti = tcpSocket.Receive(baferSl);
+                        string pocetnaSlova = Encoding.UTF8.GetString(baferSl, 0, bajti);
                         Console.WriteLine(pocetnaSlova);
 
                         Console.WriteLine("Unesite sto duzu rijec sastavljenu od ponudjenih slova: ");
                         string rijec = Console.ReadLine();
                         tcpSocket.Send(Encoding.UTF8.GetBytes(rijec));                                                      //SLAGALICA
 
-                        brBajta = tcpSocket.Receive(buffer);
-                        odgovor = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                        brBajta = tcpSocket.Receive(baferSl);
+                        odgovor = Encoding.UTF8.GetString(baferSl, 0, brBajta);
                         Console.WriteLine(odgovor);
                     }
                     else if (oznakaIgre == "sk")
                     {
-                        brBajta = tcpSocket.Receive(bafer);
-                        string skocko = Encoding.UTF8.GetString(bafer, 0, brBajta);
+                        byte[] baferSk = new byte[1024];
+                        brBajta = tcpSocket.Receive(baferSk);
+                        string skocko = Encoding.UTF8.GetString(baferSk, 0, brBajta);
                         Console.WriteLine(skocko);
+                        bool skKraj = true;
 
-                        while (true)                                                                        // SKOCKO
+                        while (skKraj)                                                                        // SKOCKO
                         {
                             string rijec = Console.ReadLine();
                             tcpSocket.Send(Encoding.UTF8.GetBytes(rijec));
 
-                            bajti = tcpSocket.Receive(bafer);
-                            string znakovi = Encoding.UTF8.GetString(bafer, 0, bajti);
+                            bajti = tcpSocket.Receive(baferSk);
+                            string znakovi = Encoding.UTF8.GetString(baferSk, 0, bajti);
                             if (znakovi.Contains("4 znaka su"))
                             {
                                 string[] poruka = znakovi.Split('|');
                                 string odgovorNakonPokusaja = poruka[0] + poruka[3];
                                 Console.WriteLine(odgovorNakonPokusaja);
                                 Console.WriteLine("Zavrsili ste igru skocko.");
-                                break;
+                                skKraj = false;
+                            }else if (znakovi.Contains("Niste pogodili."))
+                            {
+                                Console.WriteLine(znakovi);
+                                Console.WriteLine("Zavrsili ste igru skocko.");
+                                skKraj = false;
                             }
                             else
                             {
                                 string[] poruka = znakovi.Split('|');
 
-                                Console.WriteLine(poruka[0]);
-                                int tMesto = int.Parse(poruka[1]);
-                                int pMesto = int.Parse(poruka[2]);
-                                if (tMesto == 0 && pMesto == 0)
+                                if (poruka.Length != 1)
                                 {
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("****");
-                                    Console.ResetColor();
-                                }
-                                else
-                                {
-                                    int brojZnakova = 0;
-                                    for (int i = 0; i < tMesto; i++)
-                                    {
-                                        Console.ForegroundColor = ConsoleColor.Green;
-                                        Console.Write('*');
-                                        brojZnakova++;
-                                        Console.ResetColor();
-                                    }
-                                    for (int i = 0; i < pMesto; i++)
-                                    {
-                                        Console.ForegroundColor = ConsoleColor.Blue;
-                                        Console.Write('*');
-                                        brojZnakova++;
-                                        Console.ResetColor();
-                                    }
-                                    while (brojZnakova != 4)
+                                    Console.WriteLine(poruka[0]);
+                                    int tMesto = int.Parse(poruka[1]);
+                                    int pMesto = int.Parse(poruka[2]);
+                                    if (tMesto == 0 && pMesto == 0)
                                     {
                                         Console.ForegroundColor = ConsoleColor.Red;
-                                        Console.Write('*');
-                                        brojZnakova++;
+                                        Console.WriteLine("****");
                                         Console.ResetColor();
                                     }
-                                    Console.WriteLine();
+                                    else
+                                    {
+                                        int brojZnakova = 0;
+                                        for (int i = 0; i < tMesto; i++)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.Write('*');
+                                            brojZnakova++;
+                                            Console.ResetColor();
+                                        }
+                                        for (int i = 0; i < pMesto; i++)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Blue;
+                                            Console.Write('*');
+                                            brojZnakova++;
+                                            Console.ResetColor();
+                                        }
+                                        while (brojZnakova != 4)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.Write('*');
+                                            brojZnakova++;
+                                            Console.ResetColor();
+                                        }
+                                        Console.WriteLine();
+                                    }
                                 }
                             }
                         }
-                        brBajta = tcpSocket.Receive(bafer);
-                        string krajSkocka = Encoding.UTF8.GetString(bafer, 0, brBajta);
+                        brBajta = tcpSocket.Receive(baferSk);
+                        string krajSkocka = Encoding.UTF8.GetString(baferSk, 0, brBajta);
                         Console.WriteLine(krajSkocka);
 
                     }
                     else if (oznakaIgre == "kzz")
                     {
+                        byte[] baferKzz = new byte[1024];
                         while (krajIgre)
                         {
-                            bajti = tcpSocket.Receive(bafer);
-                            string poruka = Encoding.UTF8.GetString(bafer, 0, bajti);
+                            bajti = tcpSocket.Receive(baferKzz);
+                            string poruka = Encoding.UTF8.GetString(baferKzz, 0, bajti);
 
-                            if (poruka.Trim() == "Odgovoreno je na sva pitanja. Kraj igre!")
+                            if (poruka.Contains("Odgovoreno je na sva pitanja. Kraj igre!"))
                             {
-                                Console.WriteLine("USAO SAM");
                                 krajIgre = false;
                                 break;
                             }
@@ -152,8 +163,8 @@ namespace Klijent
                             string izabranOdgovor = Console.ReadLine();
                             tcpSocket.Send(Encoding.UTF8.GetBytes(izabranOdgovor));
 
-                            int bajt = tcpSocket.Receive(bafer);
-                            string provjeraOdgovora = Encoding.UTF8.GetString(bafer, 0, bajt);
+                            int bajt = tcpSocket.Receive(baferKzz);
+                            string provjeraOdgovora = Encoding.UTF8.GetString(baferKzz, 0, bajt);
                             Console.WriteLine(provjeraOdgovora);
                         }
 
@@ -177,7 +188,7 @@ namespace Klijent
             {
                 bajtovi = tcpSocket.Receive(tabelaBufer);
                 string tabela = Encoding.UTF8.GetString(tabelaBufer, 0, bajtovi);
-                Console.Write(tabela);
+                Console.WriteLine(tabela);
             }
             catch (SocketException ex)
             {
