@@ -140,8 +140,9 @@ namespace Klijent
                             bajti = tcpSocket.Receive(bafer);
                             string poruka = Encoding.UTF8.GetString(bafer, 0, bajti);
 
-                            if (poruka == "Odgovoreno je na sva pitanja. Kraj igre!")
+                            if (poruka.Trim() == "Odgovoreno je na sva pitanja. Kraj igre!")
                             {
+                                Console.WriteLine("USAO SAM");
                                 krajIgre = false;
                                 break;
                             }
@@ -157,12 +158,10 @@ namespace Klijent
                         }
 
                         
-                    }
-
-                    else if (oznakaIgre == "kraj igara")
+                    }else
                     {
-                        kraj = false;
                         Console.WriteLine("Zavrsili ste igru.");
+                        kraj = false;
                     }
 
                 }

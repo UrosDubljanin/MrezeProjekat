@@ -38,7 +38,6 @@ namespace Server
                 string[] igrice=Array.Empty<string>();
                 try
                 {
-                    Console.WriteLine("Povežite sve klijente, pa pritisnite ENTER...");
                     while (brojacIgraca<brojTrazenihIgraca) {
                         int brBajta = udpSocket.ReceiveFrom(prijavaBufer, ref posiljaocEP);
                         string poruka = Encoding.UTF8.GetString(prijavaBufer, 0, brBajta);
@@ -149,8 +148,12 @@ namespace Server
 
                     Console.WriteLine("Svi klijenti su spremni, možemo nastaviti.");
 
+                    
+                   
+
                     listIgri.Add("kraj igara");
                     igrice = listIgri.ToArray();
+
 
                     //IGRE
                     for (int i = 0; i < igrice.Length; i++)
@@ -460,7 +463,7 @@ namespace Server
                             }
                             foreach (var klijent in sviKlijenti)
                             {
-                                Console.WriteLine("asghfsjkfh");
+                                Console.WriteLine("asghfsjkfh igara");
                                 string kraj = "Odgovoreno je na sva pitanja. Kraj igre!";
                                 klijent.Send(Encoding.UTF8.GetBytes(kraj));
                             }
@@ -472,6 +475,7 @@ namespace Server
                     Console.WriteLine(e.Message);
                     break;
                 }
+                krajIgre = false;
             }
 
             Console.WriteLine("\n--- KRAJ IGARA ---");
@@ -502,9 +506,6 @@ namespace Server
 
             udpSocket.Close();
             tcpSocket.Close();
-
-            Environment.Exit(0); 
-
         }
     }
 }
