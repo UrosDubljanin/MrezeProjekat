@@ -40,6 +40,10 @@ namespace Klijent
             tcpSocket.Send(Encoding.UTF8.GetBytes(spreman));
             bool kraj = true;
 
+            brBajta=tcpSocket.Receive(buffer);
+            odgovor= Encoding.UTF8.GetString(buffer, 0, brBajta);
+            Console.WriteLine(odgovor);
+
             bool krajIgre = true;
 
             while (kraj)

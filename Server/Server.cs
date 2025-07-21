@@ -123,6 +123,18 @@ namespace Server
                         string p = "Uspesno ste ostvarili vezu sa serverom. Kad budete spremni posaljite poruku [SPREMAN]";
                         byte[] bajtovi = Encoding.UTF8.GetBytes(p);
                         sc.Send(bajtovi);
+                        if (sviKlijenti.Count == 1)
+                        {
+                            string poruka="Dobro dosli u trening igru kviza TV Slagalica, danasnji takmicar je " + igraci[sc].KorisnickoIme+" \n";
+                            bajtovi = Encoding.UTF8.GetBytes(poruka);
+                            sc.Send(bajtovi);
+                        }
+                        else
+                        {
+                            string poruka = "Dobro dosli u kviz TV Slagalica, danasnji takmicar je " + igraci[sc].KorisnickoIme + " \n";
+                            bajtovi = Encoding.UTF8.GetBytes(poruka);
+                            sc.Send(bajtovi);
+                        }
                     }
 
                     while (spremniKlijenti.Values.Any(spreman => !spreman))
